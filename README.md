@@ -2,7 +2,7 @@
 
 Installation:
 ```bash
-$ composer require optimondo/dpdWebservice
+$ composer require optimondo/dpdwebservice
 ```
 
 Features:
