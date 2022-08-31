@@ -1,9 +1,8 @@
 # DPD Webservice
-[![Latest Stable Version](https://poser.pugx.org/mcs/dpd/v/stable)](https://packagist.org/packages/mcs/dpd) [![Total Downloads](https://poser.pugx.org/mcs/dpd/downloads)](https://packagist.org/packages/mcs/dpd) [![Latest Unstable Version](https://poser.pugx.org/mcs/dpd/v/unstable)](https://packagist.org/packages/mcs/dpd) [![License](https://poser.pugx.org/mcs/dpd/license)](https://packagist.org/packages/mcs/dpd)
 
 Installation:
 ```bash
-$ composer require mcs/dpd
+$ composer require optimondo/dpdWebservice
 ```
 
 Features:
@@ -13,10 +12,10 @@ Features:
 Basic shipment usage:
 
 ```php
-use MCS\DPDAuthorisation;
-use MCS\DPDShipment;
+use DPDWebservice\DPDAuthorisation;
+use DPDWebservice\DPDShipment;
 	
-try{
+try {
     // Second parameter to disable the wsdl cache defaults to true
     $authorisation = new DPDAuthorisation([
         'staging' => true,
@@ -33,7 +32,7 @@ try{
     $shipment = new DPDShipment($authorisation);
 
     // Set the language for the track&trace link
-    $shipment->setTrackingLanguage('nl_NL');
+    $shipment->setTrackingLanguage('de_DE');
 
     // Enable saturday delivery
     $shipment->setSaturdayDelivery(true);   
@@ -61,9 +60,9 @@ try{
     $shipment->setSender([
         'name1' => 'Your Company',
         'street' => 'Street 12',
-        'country' => 'NL',
-        'zipCode' => '1234AB',
-        'city' => 'Amsterdam',
+        'country' => 'DE',
+        'zipCode' => '12345',
+        'city' => 'Berlin',
         'email' => 'contact@yourcompany.com',
         'phone' => '1234567645'
     ]);
@@ -109,7 +108,8 @@ try{
     echo $shipment->getLabels();
 
 
-}catch(Exception $e){
+}
+catch(Exception $e){
     echo $e->getMessage();		
 }
 ```
@@ -117,10 +117,11 @@ try{
 Basic parcel status usage:
 
 ```php
-use MCS\DPDAuthorisation;
-use MCS\DPDParcelStatus;
+use DPDWebservice\DPDAuthorisation;
+use DPDWebservice\DPDParcelStatus;
 
-try{
+try
+{
 
     // Authorize
     // Be aware that this functionality doesn't work with test credentials
@@ -142,7 +143,8 @@ try{
     print_r($parcelStatus);
     echo '</pre>';
 
-}catch(Exception $e){
+}
+catch(Exception $e){
     echo $e->getMessage();		
 }
 ```

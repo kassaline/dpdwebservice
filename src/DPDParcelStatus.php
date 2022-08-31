@@ -1,4 +1,4 @@
-<?php namespace MCS;
+<?php namespace DPDWebservice;
 
 use Exception;
 use Soapclient;

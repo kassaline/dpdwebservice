@@ -1,9 +1,9 @@
 <?php
 
-	require_once 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 	
-use MCS\DPDAuthorisation;
-use MCS\DPDParcelStatus;
+use DPDWebservice\DPDAuthorisation;
+use DPDWebservice\DPDParcelStatus;
 
 try{
 

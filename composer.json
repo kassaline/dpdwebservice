@@ -1,18 +1,18 @@
 {
-    "name": "mcs/dpd",
-    "description": "Library to interface with the DPD web services",
+    "name": "optimondo/dpdwebservice",
+    "description": "Library to interface with the SOAP DPD web services",
     "license": "MIT",
     "keywords": ["dpd", "dpd webservice", "dpd api", "dpd soap"],
     "minimum-stability": "dev",
     "authors": [
         {
-            "name": "Michiel Meertens",
-            "email": "meertensmichiel28@gmail.com"
+            "name": "Daniel Siekiera",
+            "email": "ds@optimondo.de"
         }
     ],
     "require": {
         "php": ">= 5.4"
-    },
+	},
     "require-dev": {},
     "autoload": {
         "psr-4": {

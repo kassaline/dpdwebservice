@@ -2,8 +2,8 @@
 
 require_once 'vendor/autoload.php';
     
-use MCS\DPDAuthorisation;
-use MCS\DPDShipment;
+use DPDWebservice\DPDAuthorisation;
+use DPDWebservice\DPDShipment;
 
 try{
     

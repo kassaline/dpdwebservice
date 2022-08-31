@@ -1,9 +1,9 @@
-<?php namespace MCS;
+<?php namespace DPDWebservice;
 
 use Exception;
-use Soapclient;
-use SoapFault;
-use SOAPHeader;
+use \Soapclient;
+use \SoapFault;
+use \SOAPHeader;
 
 class DPDShipment{
 
@@ -145,8 +145,8 @@ class DPDShipment{
         
         try{
 
-            $client = new Soapclient($this->environment['shipWsdl'], $soapParams);
-            $header = new SOAPHeader(self::SOAPHEADER_URL, 'authentication', $this->authorisation['token']);
+            $client = new \Soapclient($this->environment['shipWsdl'], $soapParams);
+            $header = new \SOAPHeader(self::SOAPHEADER_URL, 'authentication', $this->authorisation['token']);
             $client->__setSoapHeaders($header);
             $response = $client->storeOrders($this->storeOrderMessage);
 
@@ -178,20 +178,21 @@ class DPDShipment{
                 ];    
             }
         }
-        catch (SoapFault $e)
+        catch (\SoapFault $e)
         {
          throw new Exception($e->faultstring);   
         }
 
     }
-
-    /**
-     * Enable DPD's B2C service. Only allowed for countries in protected $predictCountries
-     * @param array $array
-     *  'channel' => email|telephone|sms,
-     *  'value' => emailaddress or phone number,
-     *  'language' => EN
-     */
+	
+	/**
+	 * Enable DPD's B2C service. Only allowed for countries in protected $predictCountries
+	 * @param array $array
+	 *  'channel' => email|telephone|sms,
+	 *  'value' => emailaddress or phone number,
+	 *  'language' => EN
+	 * @throws Exception
+	 */
     public function setPredict($array)
     {
 
@@ -279,9 +280,9 @@ class DPDShipment{
      * Set the printoptions
      * @param array $array see protected $storeOrderMessage
      */
-    public function setPrintOptions($printoptions)
+    public function setPrintOptions($printOptions)
     {
-     $this->storeOrderMessage['printOptions'] = array_merge($this->storeOrderMessage['printOptions'], $printoptions);
+     $this->storeOrderMessage['printOptions'] = array_merge($this->storeOrderMessage['printOptions'], $printOptions);
     }
     
     /**
