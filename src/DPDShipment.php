@@ -15,9 +15,9 @@ class DPDShipment
 	
 	protected $environment;
 	
-	protected $authorisation;
+	protected DPDAuthorisation $authorisation;
 	
-	protected $predictCountries = [
+	protected array $predictCountries = [
 		'BE', 'NL', 'DE', 'AT',
 		'PL', 'FR', 'PT', 'GB',
 		'LU', 'EE', 'CH', 'IE',
@@ -25,7 +25,7 @@ class DPDShipment
 		'CZ', 'HU'
 	];
 	
-	protected $storeOrderMessage = [
+	protected array $storeOrderMessage = [
 		'printOptions' => [
 			'printOption' => [
 				'paperFormat' => null,
@@ -81,8 +81,10 @@ class DPDShipment
 	];
 	
 	protected $trackingLanguage = null;
+	
 	protected $label = null;
-	protected $airWayBills = [];
+	
+	protected array $airWayBills = [];
 	
 	
 	/**
@@ -245,6 +247,7 @@ class DPDShipment
 		return $this->airWayBills;
 	}
 	
+	
 	/**
 	 * Set the general shipmentdata
 	 * @param array $array see protected $storeOrderMessage
@@ -253,6 +256,7 @@ class DPDShipment
 	{
 		$this->storeOrderMessage['order']['generalShipmentData'] = array_merge($this->storeOrderMessage['order']['generalShipmentData'], $array);
 	}
+	
 	
 	/**
 	 * Enable saturday delivery
