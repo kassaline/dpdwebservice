@@ -28,8 +28,9 @@ class DPDShipment
 	protected array $storeOrderMessage = [
 		'printOptions' => [
 			'printOption' => [
-				'paperFormat' => null,
-				'printerLanguage' => null
+				'outputFormat' => 'PDF',
+				'paperFormat' => 'A6',
+				'startPosition' => 'UPPER_LEFT'
 			],
 		],
 		'order' => [
@@ -75,7 +76,8 @@ class DPDShipment
 			'parcels' => [],
 			'productAndServiceData' => [
 				'saturdayDelivery' => false,
-				'orderType' => 'consignment'
+				'orderType' => 'consignment',
+				'food' => false
 			]
 		]
 	];
@@ -91,7 +93,7 @@ class DPDShipment
 	 * @param object  DPDAuthorisation    $authorisationObject
 	 * @param boolean [$wsdlCache         = true]
 	 */
-	public function __construct(DPDAuthorisation $authorisationObject, $wsdlCache = true)
+	public function __construct($authorisationObject, $wsdlCache = true)
 	{
 		$this->authorisation = $authorisationObject->authorisation;
 		$this->environment = [
@@ -109,7 +111,8 @@ class DPDShipment
 	 */
 	public function addParcel(array $array)
 	{
-		if (!isset($array['weight']) or !isset($array['height']) or !isset($array['length']) or !isset($array['width'])) {
+		if (!isset($array['weight']) or !isset($array['height']) or !isset($array['length']) or !isset($array['width']))
+		{
 			throw new Exception('Parcel array not complete');
 		}
 		$volume = str_pad((string)ceil($array['length']), 3, '0', STR_PAD_LEFT);
@@ -129,45 +132,53 @@ class DPDShipment
 	 */
 	public function submit()
 	{
-		
-		if (isset($this->storeOrderMessage['order']['productAndServiceData']['predict'])) {
-			if (!in_array(strtoupper($this->storeOrderMessage['order']['generalShipmentData']['recipient']['country']), $this->predictCountries)) {
+		if (isset($this->storeOrderMessage['order']['productAndServiceData']['predict']))
+		{
+			if (!in_array(strtoupper($this->storeOrderMessage['order']['generalShipmentData']['recipient']['country']), $this->predictCountries))
+			{
 				throw new Exception('Predict service not available for this destination');
 			}
 		}
 		
-		if (count($this->storeOrderMessage['order']['parcels']) === 0) {
+		if (count($this->storeOrderMessage['order']['parcels']) === 0)
+		{
 			throw new Exception('Create at least 1 parcel');
 		}
 		
-		if ($this->environment['wsdlCache']) {
+		if ($this->environment['wsdlCache'])
+		{
 			$soapParams = [
 				'cache_wsdl' => WSDL_CACHE_BOTH
 			];
 		}
-		else {
+		else
+		{
 			$soapParams = [
 				'cache_wsdl' => WSDL_CACHE_NONE,
 				'exceptions' => true
 			];
 		}
 		
-		try {
+		try
+		{
 			$client = new \Soapclient($this->environment['shipWsdl'], $soapParams);
 			$header = new \SOAPHeader(self::SOAPHEADER_URL, 'authentication', $this->authorisation['token']);
 			
 			$client->__setSoapHeaders($header);
 			$response = $client->storeOrders($this->storeOrderMessage);
 			
-			if (isset($response->orderResult->shipmentResponses->faults)) {
+			if (isset($response->orderResult->shipmentResponses->faults))
+			{
 				throw new Exception($response->orderResult->shipmentResponses->faults->message);
 			}
 			
 			$this->label = $response->orderResult->parcellabelsPDF;
 			unset($response->orderResult->parcellabelsPDF);
 			
-			if (is_array($response->orderResult->shipmentResponses->parcelInformation)) {
-				foreach ($response->orderResult->shipmentResponses->parcelInformation as $parcelResponse) {
+			if (is_array($response->orderResult->shipmentResponses->parcelInformation))
+			{
+				foreach ($response->orderResult->shipmentResponses->parcelInformation as $parcelResponse)
+				{
 					$this->airWayBills[] = [
 						'airWayBill' => $parcelResponse->parcelLabelNumber,
 						'trackingLink' => strtr(self::TRACKING_URL, [
@@ -177,7 +188,8 @@ class DPDShipment
 					];
 				}
 			}
-			else {
+			else
+			{
 				$this->airWayBills[] = [
 					'airWayBill' => $response->orderResult->shipmentResponses->parcelInformation->parcelLabelNumber,
 					'trackingLink' => strtr(self::TRACKING_URL, [
@@ -186,10 +198,11 @@ class DPDShipment
 					])
 				];
 			}
-		} catch (\SoapFault $e) {
+		}
+		catch (\SoapFault $e)
+		{
 			throw new Exception($e->faultstring);
 		}
-		
 	}
 	
 	
