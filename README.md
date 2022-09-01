@@ -1,4 +1,4 @@
-# DPD Webservice
+# DPD SOAP 4.4.0 Webservice
 
 Installation:
 ```bash
@@ -6,8 +6,8 @@ $ composer require optimondo/dpdwebservice
 ```
 
 Features:
- * Submit a shipment to the dpd webservice and retrieve it's label and tracking information
- * Retrieve parcel status information
+* Submit a shipment to the dpd webservice and retrieve it's label and tracking information
+* Retrieve parcel status information
 
 Basic shipment usage:
 

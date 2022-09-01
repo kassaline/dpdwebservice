@@ -15,7 +15,7 @@ class DPDShipment
 	
 	protected $environment;
 	
-	protected DPDAuthorisation $authorisation;
+	protected $authorisation;
 	
 	protected array $predictCountries = [
 		'BE', 'NL', 'DE', 'AT',
