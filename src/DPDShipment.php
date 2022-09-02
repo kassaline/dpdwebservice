@@ -90,10 +90,10 @@ class DPDShipment
 	
 	
 	/**
-	 * @param object  DPDAuthorisation    $authorisationObject
-	 * @param boolean [$wsdlCache         = true]
+	 * @param object  $authorisationObject
+	 * @param boolean $wsdlCache [$wsdlCache         = true]
 	 */
-	public function __construct($authorisationObject, $wsdlCache = true)
+	public function __construct($authorisationObject, bool $wsdlCache = true)
 	{
 		$this->authorisation = $authorisationObject->authorisation;
 		$this->environment = [
@@ -123,7 +123,6 @@ class DPDShipment
 			'volume' => $volume,
 			'weight' => (int)ceil($array['weight'] / 10)
 		];
-		
 	}
 	
 	
