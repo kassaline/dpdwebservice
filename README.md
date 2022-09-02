@@ -21,7 +21,7 @@ try {
         'staging' => true,
         'delisId' => '...',
         'password' => '...',
-        'messageLanguage' => 'en_EN',
+        'messageLanguage' => 'de_DE',
         'customerNumber' => '...'
     ]);
     
@@ -41,7 +41,7 @@ try {
     $shipment->setPredict([
         'channel' => 'email',
         'value' => 'someone@mail.com',
-        'language' => 'EN'
+        'language' => 'DE'
     ]);
 
     // Set the general shipmentdata
