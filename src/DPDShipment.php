@@ -1,4 +1,20 @@
-<?php namespace DPDWebservice;
+<?php
+/*
+ * **************************************************************************************
+ *
+ * Dateiname:                 DPDShipment.php
+ * Projekt:                   dpdwebservice
+ *
+ * erstellt von:              Daniel Siekiera <ds@optimondo.de>
+ * erstellt am:	              02.09.22, 17:17 Uhr
+ * zu letzt bearbeitet:       02.09.22, 16:36 Uhr
+ *
+ * Copyright © 2022 - Optimondo GmbH
+ *
+ * **************************************************************************************
+ */
+
+namespace DPDWebservice;
 
 use Exception;
 use \Soapclient;
@@ -17,6 +33,9 @@ class DPDShipment
 	
 	protected $authorisation;
 	
+	/**
+	 * @var array|string[]
+	 */
 	protected array $predictCountries = [
 		'BE', 'NL', 'DE', 'AT',
 		'PL', 'FR', 'PT', 'GB',
@@ -25,16 +44,21 @@ class DPDShipment
 		'CZ', 'HU'
 	];
 	
+	/**
+	 * @var array
+	 */
 	protected array $storeOrderMessage = [
 		'printOptions' => [
 			'printOption' => [
-				'outputFormat' => 'PDF',
-				'paperFormat' => 'A6',
-				'startPosition' => 'UPPER_LEFT'
+				'paperFormat' => 'A4',
+				'startPosition' => 'UPPER_LEFT',
+				'outputFormat' => 'PDF'
 			],
 		],
 		'order' => [
 			'generalShipmentData' => [
+				'mpsId' => 'B2C',
+				'identificationNumber' => null,
 				'sendingDepot' => null,
 				'product' => null,
 				'mpsCustomerReferenceNumber1' => null,
@@ -75,9 +99,8 @@ class DPDShipment
 			],
 			'parcels' => [],
 			'productAndServiceData' => [
-				'saturdayDelivery' => false,
-				'orderType' => 'consignment',
-				'food' => false
+				'saturdayDelivery' => true,
+				'orderType' => 'consignment'
 			]
 		]
 	];
@@ -90,10 +113,10 @@ class DPDShipment
 	
 	
 	/**
-	 * @param object  $authorisationObject
-	 * @param boolean $wsdlCache [$wsdlCache         = true]
+	 * @param object  DPDAuthorisation    $authorisationObject
+	 * @param boolean [$wsdlCache         = true]
 	 */
-	public function __construct($authorisationObject, bool $wsdlCache = true)
+	public function __construct($authorisationObject, $wsdlCache = true)
 	{
 		$this->authorisation = $authorisationObject->authorisation;
 		$this->environment = [
@@ -115,6 +138,7 @@ class DPDShipment
 		{
 			throw new Exception('Parcel array not complete');
 		}
+		
 		$volume = str_pad((string)ceil($array['length']), 3, '0', STR_PAD_LEFT);
 		$volume .= str_pad((string)ceil($array['width']), 3, '0', STR_PAD_LEFT);
 		$volume .= str_pad((string)ceil($array['height']), 3, '0', STR_PAD_LEFT);
@@ -166,8 +190,7 @@ class DPDShipment
 			$client->__setSoapHeaders($header);
 			$response = $client->storeOrders($this->storeOrderMessage);
 			
-			if (isset($response->orderResult->shipmentResponses->faults))
-			{
+			if (isset($response->orderResult->shipmentResponses->faults)) {
 				throw new Exception($response->orderResult->shipmentResponses->faults->message);
 			}
 			
@@ -198,10 +221,10 @@ class DPDShipment
 				];
 			}
 		}
-		catch (\SoapFault $e)
-		{
+		catch (\SoapFault $e) {
 			throw new Exception($e->faultstring);
 		}
+		
 	}
 	
 	
@@ -215,37 +238,46 @@ class DPDShipment
 	 */
 	public function setPredict(array $array)
 	{
-		
-		if (!isset($array['channel']) or !isset($array['value']) or !isset($array['language'])) {
+		if (!isset($array['channel']) or !isset($array['value']) or !isset($array['language']))
+		{
 			throw new Exception('Predict array not complete');
 		}
 		
-		switch (strtolower($array['channel'])) {
+		switch (strtolower($array['channel']))
+		{
 			case 'email':
 				$array['channel'] = 1;
-				if (!filter_var($array['value'], FILTER_VALIDATE_EMAIL)) {
+				if (!filter_var($array['value'], FILTER_VALIDATE_EMAIL))
+				{
 					throw new Exception('Predict email address not valid');
 				}
 				break;
+			
 			case 'telephone':
 				$array['channel'] = 2;
-				if (empty($array['value'])) {
+				if (empty($array['value']))
+				{
 					throw new Exception('Predict value (telephone) empty');
 				}
 				break;
+			
 			case 'sms':
 				$array['channel'] = 3;
-				if (empty($array['value'])) {
+				if (empty($array['value']))
+				{
 					throw new Exception('Predict value (sms) empty');
 				}
 				break;
+			
 			default:
 				throw new Exception('Predict channel not allowed');
 		}
 		
-		if (ctype_alpha($array['language']) && strlen($array['language']) === 2) {
+		if (ctype_alpha($array['language']) && strlen($array['language']) === 2)
+		{
 			$array['language'] = strtoupper($array['language']);
 		}
+		
 		$this->storeOrderMessage['order']['productAndServiceData']['predict'] = $array;
 	}
 	
