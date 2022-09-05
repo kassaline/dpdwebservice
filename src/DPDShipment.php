@@ -6,8 +6,8 @@
  * Projekt:                   dpdwebservice
  *
  * erstellt von:              Daniel Siekiera <ds@optimondo.de>
- * erstellt am:	              02.09.22, 17:17 Uhr
- * zu letzt bearbeitet:       02.09.22, 16:36 Uhr
+ * erstellt am:	              05.09.22, 12:14 Uhr
+ * zu letzt bearbeitet:       05.09.22, 12:14 Uhr
  *
  * Copyright © 2022 - Optimondo GmbH
  *
@@ -57,7 +57,7 @@ class DPDShipment
 		],
 		'order' => [
 			'generalShipmentData' => [
-				'mpsId' => 'B2C',
+				'mpsId' => null,
 				'identificationNumber' => null,
 				'sendingDepot' => null,
 				'product' => null,
@@ -152,6 +152,7 @@ class DPDShipment
 	
 	/**
 	 * Submit the parcel to the DPD webservice
+	 * @throws Exception
 	 */
 	public function submit()
 	{
@@ -194,8 +195,8 @@ class DPDShipment
 				throw new Exception($response->orderResult->shipmentResponses->faults->message);
 			}
 			
-			$this->label = $response->orderResult->parcellabelsPDF;
-			unset($response->orderResult->parcellabelsPDF);
+			$this->label = $response->orderResult->output->content;
+			unset($response->orderResult->output->content);
 			
 			if (is_array($response->orderResult->shipmentResponses->parcelInformation))
 			{
@@ -224,7 +225,6 @@ class DPDShipment
 		catch (\SoapFault $e) {
 			throw new Exception($e->faultstring);
 		}
-		
 	}
 	
 	
